@@ -275,21 +275,8 @@ def replicate_url(full_url,
         options = '-sfL'
     need_download = True
     while need_download:
-        curl_cmd = ['/usr/bin/curl', options,
-                    '--create-dirs',
-                    '-o', local_file_path,
-                    '-w', '%{http_code}']
-        if not full_url.endswith(".gz"):
-            # stupid hack for stupid Apple behavior where it sometimes returns
-            # compressed files even when not asked for
-            curl_cmd.append('--compressed')
+        curl_cmd = ['/usr/local/bin/aria2c', '-o', local_file_path]
         resumed = False
-        if not ignore_cache and os.path.exists(local_file_path):
-            if not attempt_resume:
-                curl_cmd.extend(['-z', local_file_path])
-            else:
-                resumed = True
-                curl_cmd.extend(['-z', '-' + local_file_path, '-C', '-'])
         curl_cmd.append(full_url)
         print("Downloading %s..." % full_url)
         need_download = False
